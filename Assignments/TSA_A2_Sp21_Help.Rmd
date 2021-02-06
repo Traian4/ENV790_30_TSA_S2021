@@ -1,7 +1,7 @@
 ---
 title: "ENV 790.30 - Time Series Analysis for Energy Data | Spring 2021"
 subtitle: "Assignment 2 - Due date 02/05/21"
-author: "Student Name"
+author: "Traian Nirca"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -34,7 +34,7 @@ Consider the data provided in the spreadsheet "Table_10.1_Renewable_Energy_Produ
 #Importing data set without change the original file using read.xlsx
 energy_data <- read.xlsx(file="../Data/Table_10.1_Renewable_Energy_Production_and_Consumption_by_Source.xlsx",header=FALSE,startRow = 13,sheetIndex=1) #startRow is equivalent to skip on read.table
 
-#Now let's extract teh column names from row 11
+#Now let's extract the column names from row 11
 read_col_names <- read.xlsx(file="../Data/Table_10.1_Renewable_Energy_Production_and_Consumption_by_Source.xlsx",header=FALSE,startRow = 11,endRow=11,sheetIndex=1)
 
 colnames(energy_data) <- read_col_names
@@ -46,21 +46,111 @@ head(energy_data)
 ## Question 1
 You will work only with the following columns: Total Biomass Energy Production, Total Renewable Energy Production, Hydroelectric Power Consumption. Create a data frame structure with these three time series only. Use the command head() to verify your data.
 
+```{r}
+work_data <- data.frame("Total Biomass Energy Production"=energy_data[,4], "Total Renewable Energy Production"=energy_data[,5], "Hydroelectric Power Consumption"=energy_data[,6] )
+head(work_data)
+
+```
+
+
+
 ## Question 2
 Transform your data frame in a time series object and specify the starting point and frequency of the time series using the function ts().
+
+```{r}
+time_series <- ts(work_data, frequency = 12, start = c(1973,1))
+#It is a monthly data so the frequency is 12, while the first point is January 1973
+head(time_series)
+
+```
+
 
 ## Question 3
 Compute mean and standard deviation for these three series.
 
+```{r}
+cat("For Total Biomass Energy Production:\n")
+cat("Mean_bio =", mean(time_series[,1]), "\nSd_bio =", sd(time_series[,1])) 
+
+
+cat("\nFor Total Renewable Energy Production:\n")
+cat("Mean_ren =", mean(time_series[,2]), "\nSd_ren =", sd(time_series[,2]))
+
+cat("\nHydroelectric Power Consumption:\n")
+cat("Mean_hydro =", mean(time_series[,3]), "\nSd_hydro =", sd(time_series[,3]))
+
+```
+
 ## Question 4
 Display and interpret the time series plot for each of these variables. Try to make your plot as informative as possible by writing titles, labels, etc. For each plot add a horizontal line at the mean of each series in a different color.
 
+```{r}
+plot(time_series[,1], ylab="Energy (trillion Btu)", main="Total Biomass Energy Production over time")
+abline(h=270.69, col="red")
+text(1975, 290, "Mean", col="red")
+
+
+plot(time_series[,2], ylab="Energy (trillion Btu)", main="Total Renewable Energy Production over time")
+abline(h=572.73, col="red")
+text(1975, 615, "Mean", col="red")
+
+
+plot(time_series[,3], ylab="Power (trillion Btu)", main="Hydroelectric Power Consumption over time")
+abline(h=236.95, col="red")
+text(1998, 220, "Mean", col="red")
+
+```
+Both biomass and renewable energy production has been increasing significantly over time since the seventies. In 2020 we can see a drop in biomass energy production, most likely due to the fact that 2020 has been an outlier. hydroelectric power consumption has seen a small decrease since the early 2000.
+
+
 ## Question 5
 Compute the correlation between these three series. Are they significantly correlated? Explain your answer.
+```{r}
+
+cat("CORRELATION between Total Biomass Energy Production and Total Renewable Energy Production:\n")
+cat("Cor =",cor(time_series[,1], time_series[,2]) ) 
+
+cat("\nCORRELATION between Total Biomass Energy Production and Hydroelectric Power Consumption:\n")
+cat("Cor =",cor(time_series[,1], time_series[,3]) )
+
+cat("\nCORRELATION between Total Renewable Energy Production and Hydroelectric Power Consumption:\n")
+cat("Cor =",cor(time_series[,2], time_series[,3]) )
+
+
+```
+There is a very strong correlation between biomass and renewable energy production, we can even see it graphically when we compare the two plots. There is basically no linear correlation between the renewable energy production and the hydroelectric consumption, Cor~0. While there is some negative correlation between the biomass and hydroelectric energy, it is very weak. It is possible it is linked only to a few variables.
+
 
 ## Question 6
 Compute the autocorrelation function from lag 1 up to lag 40 for these three variables. What can you say about these plots? Do the three of them have the same behavior?
 
+```{r}
+#cat("AUTOCORRELATION Function:\n")
+
+acf(time_series[,1], lag.max = 40, type = c("correlation"), main="Biomass Autocorrelation")
+
+acf(time_series[,2], lag.max = 40, type = c("correlation"), main="Renewables Autocorrelation")
+
+acf(time_series[,3], lag.max = 40, type = c("correlation"), main="Hydroelectric Autocorrelation")
+
+
+```
+
+The three plots do not behave in the same way. The first two are decreasing, while the third is oscillating: this might be related to seasonality. In the second plot we also observe a very small oscillation in the decreasing trend. 
+
+
 ## Question 7
 Compute the partial autocorrelation function from lag 1 to lag 40 for these three variables. How these plots differ from the ones in Q6?
+
+```{r}
+
+pacf(time_series[,1], lag.max = 40,  main="Biomass Partial Autocorrelation")
+
+pacf(time_series[,2], lag.max = 40,  main="Renewables Partial Autocorrelation")
+
+pacf(time_series[,3], lag.max = 40, main="Hydroelectric Partial Autocorrelation")
+
+
+```
+Not really sure how to comment these. There seems to be an absence of a pattern, compared to the ACF plots. There are significant correlations at the first lag, but small or insignificant afterwards: this indicates an autoregressive term in the data.
 
