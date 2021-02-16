@@ -1,10 +1,12 @@
 ---
 title: "ENV 790.30 - Time Series Analysis for Energy Data | Spring 2021"
 subtitle: "Assignment 3 - Due date 02/12/21"
-author: "Student Name"
+author: "Traian Nirca"
 output: pdf_document
 geometry: margin=2.54cm
 ---
+
+\nobreakspace
   
 ## Directions
   
@@ -29,6 +31,33 @@ R packages needed for this assignment:"forecast","tseries", and "Kendall". Insta
 
 ```{r}
 #Load/install required package here
+library(lubridate)
+library(ggplot2)
+library(forecast)
+library(Kendall)
+library(tseries)
+library(xlsx)
+
+```
+
+```{r}
+#Importing data
+energy_data <- read.xlsx(file="../Data/Table_10.1_Renewable_Energy_Production_and_Consumption_by_Source.xlsx",header=FALSE,startRow = 13,sheetIndex=1)
+
+read_col_names <- read.xlsx(file="../Data/Table_10.1_Renewable_Energy_Production_and_Consumption_by_Source.xlsx",header=FALSE,startRow = 11,endRow=11,sheetIndex=1)
+
+colnames(energy_data) <- read_col_names
+
+work_data <- data.frame("Total Biomass Energy Production"=energy_data[,4], "Total Renewable Energy Production"=energy_data[,5], "Hydroelectric Power Consumption"=energy_data[,6] )
+
+time_series <- ts(work_data, frequency = 12, start = c(1973,1))
+#It is a monthly data so the frequency is 12, while the first point is January 1973
+head(time_series)
+
+
+the_date <- energy_data[,1]
+my_date <- ymd(the_date)
+head(my_date)
 
 ```
 
@@ -37,17 +66,141 @@ R packages needed for this assignment:"forecast","tseries", and "Kendall". Insta
 ### Q1
 Create a plot window that has one row and three columns. And then for each object on your data frame, fill the plot window with time series plot, ACF and PACF. You may use the some code form A2, but I want all three plots on the same window this time. (Hint: watch videos for M4)
 
+```{r}
+#Plot the three plots in the same window
+for(i in 1:3){
+  par(mfrow=c(1,3))
+  plot(time_series[,i], ylab=colnames(energy_data)[i+2])
+  Acf(time_series[,i], lag.max = 40)
+  Pacf(time_series[,i], lag.max = 40)
+  
+}
+  
+```
+
+
+
 ### Q2
 From the plot in Q1, do the series Total Biomass Energy Production, Total Renewable Energy Production, Hydroelectric Power Consumption appear to have a trend? If yes, what kind of trend?
 
+Based on the plots in Q1, Total Biomass Energy Production and Total Renewable Energy Production seem to have a linear increasing trend, while Hydroelectric Power Consumption seems to have a seasonal trend. Based on its ACF, Total Renewable Energy Production also seems to have a small seasonal approach.
+
 ### Q3
 Use the *lm()* function to fit a linear trend to the three time series. Ask R to print the summary of the regression. Interpret the regression output, i.e., slope and intercept. Save the regression coefficients for further analysis.
+
+We start by fitting a linear model to 
+
+```{r}
+nobs <- nrow(work_data)
+t <- c(1:nobs)
+
+#For Total Biomass Energy Production
+
+linear_trend_model=lm(time_series[,1]~t)
+summary(linear_trend_model)
+
+beta10 = as.numeric(linear_trend_model$coefficients[1]) #the first coefficient is the intercept term or beta0
+beta11 = as.numeric(linear_trend_model$coefficients[2]) #the second coefficient is the slope or beta1
+
+ggplot(time_series[,1], aes(x=my_date, y=time_series[,1])) +
+  geom_line(color="blue") +
+  ylab(colnames(work_data[1])) +
+  geom_smooth(color="red",method="lm")
+
+```
+```{r}
+#For Total Renewable Energy Production
+
+linear_trend_model=lm(time_series[,2]~t)
+summary(linear_trend_model)
+
+beta20 = as.numeric(linear_trend_model$coefficients[1]) #the first coefficient is the intercept term or beta0
+beta21 = as.numeric(linear_trend_model$coefficients[2]) #the second coefficient is the slope or beta1
+
+ggplot(time_series[,2], aes(x=my_date, y=time_series[,2])) +
+  geom_line(color="blue") +
+  ylab(colnames(work_data[2])) +
+  geom_smooth(color="red",method="lm")
+
+```
+
+```{r}
+#For Hydroelectric Power Consumption
+
+linear_trend_model=lm(time_series[,3]~t)
+summary(linear_trend_model)
+
+beta30 = as.numeric(linear_trend_model$coefficients[1]) #the first coefficient is the intercept term or beta0
+beta31 = as.numeric(linear_trend_model$coefficients[2]) #the second coefficient is the slope or beta1
+
+ggplot(time_series[,3], aes(x=my_date, y=time_series[,3])) +
+  geom_line(color="blue") +
+  ylab(colnames(work_data[3])) +
+  geom_smooth(color="red",method="lm")
+
+```
+The first two plots have positive slopes, while the third one has a negative slope. This is consistent with the trend that we observe visually: first two increasing and teh alst decreasing. The intercepts seem to be close to the initial values of the curves. 
+
+
  
 ### Q4
 Use the regression coefficients from Q3 to detrend the series. Plot the detrended series and  compare with the plots from Q1. What happened? Did anything change?
 
+```{r}
+detrend_data1 <- time_series[,1]-(beta10+beta11*t)
+
+ggplot(time_series[,1], aes(x=my_date, y=time_series[,1])) +
+  geom_line(color="blue") +
+  ylab(colnames(work_data[1])) +
+  geom_smooth(color="red",method="lm") +
+  geom_line(aes(y=detrend_data1), col="green")+
+  geom_smooth(aes(y=detrend_data1),color="orange",method="lm")
+
+
+```
+```{r}
+detrend_data2 <- time_series[,2]-(beta20+beta21*t)
+
+ggplot(time_series[,2], aes(x=my_date, y=time_series[,2])) +
+  geom_line(color="blue") +
+  ylab(colnames(work_data[2])) +
+  geom_smooth(color="red",method="lm") +
+  geom_line(aes(y=detrend_data2), col="green")+
+  geom_smooth(aes(y=detrend_data2),color="orange",method="lm")
+
+
+```
+
+
+```{r}
+detrend_data3 <- time_series[,3]-(beta30+beta31*t)
+
+ggplot(time_series[,3], aes(x=my_date, y=time_series[,3])) +
+  geom_line(color="blue") +
+  ylab(colnames(work_data[3])) +
+  geom_smooth(color="red",method="lm") +
+  geom_line(aes(y=detrend_data3), col="green")+
+  geom_smooth(aes(y=detrend_data3),color="orange",method="lm")
+
+
+```
+In each plot the linear trends are suppressed. We now have 3 detrended curves that we can study without worrying about the linear trends. 
+
 ### Q5
 Plot ACF and PACF for the detrended series and compare with the plots from Q1. Did the plots change? How?
+```{r}
+detrend_data <- data.frame(detrend_data1, detrend_data2, detrend_data3)
+
+for(i in 1:3){
+  par(mfrow=c(2,2))
+  Acf(time_series[,i], lag.max = 40) 
+  Pacf(time_series[,i], lag.max = 40)
+  Acf(detrend_data[,i], lag.max = 40)
+  Pacf(detrend_data[,i], lag.max = 40)
+}
+```
+
+The PACF plots have changed very little, while the ACF plots have changed considerably to let us see very distinctive repeating patterns, which are indicating seasonality. 
 
 ## Seasonal Component
 
@@ -56,10 +209,113 @@ Set aside the detrended series and consider the original series again from Q1 to
 ### Q6
 Do the series seem to have a seasonal trend? Which serie/series? Use function *lm()* to fit a seasonal means model to this/these time series. Ask R to print the summary of the regression. Interpret the regression output. Save the regression coefficients for further analysis.
 
+Series 3 has the most pronounced seasonal trend and series 2 also has one, although less pronounced.
+
+
+```{r}
+#For Hydroelectric power Consumption (Series 3)
+
+#First create the seasonal dummies
+dummies <- seasonaldummy(time_series[,3])
+
+seas_means_model=lm(time_series[,3]~dummies)
+summary(seas_means_model)
+
+#We store regression coefficients
+beta_int3=seas_means_model$coefficients[1]
+beta_coeff3=seas_means_model$coefficients[2:12]
+
+
+#compute seasonal component
+seas_comp3=array(0,nobs)
+for(i in 1:nobs){
+seas_comp3[i]=(beta_int3+beta_coeff3%*%dummies[i,])
+}
+
+#Understanding what we did
+ggplot(time_series[,3], aes(x=my_date, y=time_series[,3])) +
+geom_line(color="blue") +
+ylab(colnames(work_data[3])) +
+geom_line(aes(y=seas_comp3), col="red")
+
+```
+
+``` {r}
+#For Total Renewable Energy Production (Series 2)
+
+#First create the seasonal dummies
+dummies <- seasonaldummy(time_series[,2])
+
+seas_means_model=lm(time_series[,2]~dummies)
+summary(seas_means_model)
+
+#We store regression coefficients
+beta_int2=seas_means_model$coefficients[1]
+beta_coeff2=seas_means_model$coefficients[2:12]
+
+
+#compute seasonal component
+seas_comp2=array(0,nobs)
+for(i in 1:nobs){
+seas_comp2[i]=(beta_int2+beta_coeff2%*%dummies[i,])
+}
+
+#Understanding what we did
+ggplot(time_series[,2], aes(x=my_date, y=time_series[,2])) +
+geom_line(color="blue") +
+ylab(colnames(work_data[2])) +
+geom_line(aes(y=seas_comp2), col="red")
+
+```
+
+We have the values of the dummies for each month, as well as the intercept. We can now de-season the series. 
+
+
 ### Q7
 Use the regression coefficients from Q6 to deseason the series. Plot the deseason series and compare with the plots from part Q1. Did anything change?
+
+```{r}
+#For Hydroelectric Power Consumption
+
+deseason_data3 <- time_series[,3]-seas_comp3
+
+ggplot(time_series[,3], aes(x=my_date, y=time_series[,3])) +
+geom_line(color="blue") +
+ylab(colnames(work_data[3])) +
+geom_line(aes(y=deseason_data3), col="green")
+
+
+```
+
+```{r}
+#For Total Renewable Energy Production
+
+deseason_data2 <- time_series[,2]-seas_comp2
+
+ggplot(time_series[,2], aes(x=my_date, y=time_series[,2])) +
+geom_line(color="blue") +
+ylab(colnames(work_data[2])) +
+geom_line(aes(y=deseason_data2), col="green")
+
+
+```
+
+The seasonal component is gone from both plots.
+
 
 ### Q8
 Plot ACF and PACF for the deseason series and compare with the plots from Q1. Did the plots change? How?
 
+```{r}
+deseason_data <- data.frame(detrend_data1, deseason_data2, deseason_data3)
+
+for(i in 2:3){
+  par(mfrow=c(2,2))
+  Acf(time_series[,i], lag.max = 40) 
+  Pacf(time_series[,i], lag.max = 40)
+  Acf(deseason_data[,i], lag.max = 40)
+  Pacf(deseason_data[,i], lag.max = 40)
+}
+```
+The plots changed: we no longer see a seasonal component in the ACF, it is not oscillating anymore, instead it is decreasing. 
 
