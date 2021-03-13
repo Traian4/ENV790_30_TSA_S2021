@@ -40,13 +40,13 @@ Today we will work with data from the Climate Change Knowledge Portal from the W
 Research question: Can you see any changes on the rainfall regime or average temperature over time?
 
 ```{r}
-#Exercise 1: Look at the code I used to import and tidy the dataset for today. Make sure you unerstant the pipe structure. 
+#Exercise 1: Look at the code I used to import and tidy the dataset for today. Make sure you understand the pipe structure. 
 
-Rainfall_BR <- read.csv("./Data/pr_1901_2016_BRA.csv", stringsAsFactors = TRUE)
+Rainfall_BR <- read.csv("../Data/pr_1901_2016_BRA.csv", stringsAsFactors = TRUE)
 
-Temp_BR <- read.csv("./Data/tas_1901_2016_BRA.csv", stringsAsFactors = TRUE)
+Temp_BR <- read.csv("../Data/tas_1901_2016_BRA.csv", stringsAsFactors = TRUE)
 
-#Within the pipe I am performing the follwoign steps:
+#Within the pipe I am performing the following steps:
 #a Rename the column with Rainfall to get rid of the dots.
 #b Note that on both data sets that is a column with the month name and average. Convert it to a Month column by separating the string, i.e., month in one column and the word "Average" on another. Hint: use the separate() function in the pipe.
 #c Now you should have a column with Month. Use the paste0() function to paste month and year together and create a date object.
@@ -80,6 +80,10 @@ BR_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
 
 #Exercise 2: Plot both series over time on separate plots. Add a trend line using geom_smooth(). Can you say something about the trend just by visualizing the data?
 
+ggplot(BR_complete, aes(x=BR_complete[,1], y=BR_complete[,2])) +
+  geom_line(color="blue") +
+  geom_smooth(color="red",method="lm")
+
 
 ```
 
@@ -88,7 +92,13 @@ BR_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
 ```{r}
 #Exercise 3: Create a time series objects for each series using ts(). Make sure you specify the starting point and frequency.
 
+time_seriesR <- ts(BR_complete[,2], frequency = 12, start = c(1901,1))
+#It is a monthly data so the frequency is 12, while the first point is January 1901
+head(time_seriesR)
 
+time_seriesT <- ts(BR_complete[,3], frequency = 12, start = c(1901,1))
+#It is a monthly data so the frequency is 12, while the first point is January 1901
+head(time_seriesT)
 
 ```
 
