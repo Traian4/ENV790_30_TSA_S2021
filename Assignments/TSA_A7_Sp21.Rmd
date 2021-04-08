@@ -1,15 +1,20 @@
 ---
 title: "ENV 790.30 - Time Series Analysis for Energy Data | Spring 2021"
 subtitle: "Assignment 7 - Due date 04/07/21"
-author: "Student Name"
+author: "Traian Nirca"
 output: pdf_document
 geometry: margin=2.54cm
 header-includes:
   - \usepackage{enumerate}
   - \usepackage{enumitem}
+  - \usepackage[utf8]{inputenc}
+  - \DeclareUnicodeCharacter{00A0}{ }
 ---
+\begin{document}
 
 ## Directions
+
+
 
 You should open the .rmd file corresponding to this assignment on RStudio. The file is available on our class repository on Github. And to do so you will need to fork our repository and link it to your RStudio.
 
@@ -17,12 +22,23 @@ Once you have the project open the first thing you will do is change "Student Na
 
 When you have completed the assignment, **Knit** the text and code into a single PDF file. Rename the pdf file such that it includes your first and last name (e.g., "LuanaLima_TSA_A07_Sp21.Rmd"). Submit this pdf using Sakai.
 
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE,tidy.opts=list(width.cutoff=80), tidy=FALSE) 
+```
+
+
 ## Set up
 
 Some packages needed for this assignment: `forecast`,`tseries`,`smooth`. Do not forget to load them before running your script, since they are NOT default packages.
 
 ```{r}
 #Load/install required package here
+library(forecast)
+library(tseries)
+library(smooth)
+library(ggplot2)
+library(lubridate)
+library(kableExtra)
 
 ```
 
@@ -40,6 +56,30 @@ Read the file into a data frame. Prepare your time series data vector such that 
 
 ```{r}
 
+raw_data <- read.table(file="../Data/inflowtimeseries.txt", header=FALSE, skip = 828, nrows = 120)
+
+work_data <- data.frame("Monthly Inflow"=raw_data[,17])
+
+time_series <- ts(work_data, frequency = 12, start = c(2000,1))
+head(time_series)
+
+lastyear_raw <- read.table(file="../Data/inflowtimeseries.txt", header=FALSE, skip = 828, nrows = 132)
+lastyear_work <- data.frame("Monthly Inflow"=lastyear_raw[,17])
+lastyear_ts <- ts(lastyear_work, frequency = 12, start = c(2000,1))
+
+the_date <- paste(raw_data[,1], raw_data[,2])
+my_date <- my(the_date)
+head(my_date)
+
+the_date2 <- paste(lastyear_raw[,1], lastyear_raw[,2])
+my_date2 <- my(the_date2)
+
+
+plot(time_series, ylab="Monthly Inflow (m^3/s)")
+par(mfrow=c(1,2))
+Acf(time_series, lag.max = 40)
+Pacf(time_series, lag.max = 40)
+
 ```
 
 ### Q2
@@ -48,17 +88,49 @@ Using the $decompose()$ or $stl()$ and the $seasadj()$ functions create a series
 
 ```{r}
 
+decomposed_series <- decompose(time_series,"additive")
+plot(decomposed_series)
+
+seasadj_series <- seasadj(decomposed_series)
+plot(seasadj_series)
+
+decomposed_lastyear <- decompose(lastyear_ts,"additive")
+seasadj_lastyear <- seasadj(decomposed_lastyear)
+
+ggplot(time_series[,1], aes(x=my_date)) +
+  geom_line(aes(y=time_series[,1], col="Original Series")) +
+  geom_line(aes(y=seasadj_series, col="Deseasoned Series"))+
+  ylab("Monthly Inflow (m^3/s)") +
+  xlab("Date")
+  
+par(mfrow=c(1,2))
+Acf(seasadj_series, lag.max = 40)
+Pacf(seasadj_series, lag.max = 40)
+
 ```
+>Answer:
+We certainly see a difference between these plots and those from Q1, as there is an (obvious) absence of the seasonal trend. The ACF of the seasonaly adjusted series does maintain a degree of seasonality. 
+
 
 ## Part II: Forecasting with ARIMA models and its variations
 
 ### Q3
 
-Fit a non-seasonal ARIMA$(p,d,q)$ model usign the auto.arima() function to the non-seasonal data. Forecast 12 months ahead of time using the $forecast()$ function. Plot your forecasting results and further include on the plot the last year of non-seasonal data to compare with forecasted values (similar to the plot on the lesson file for M10).
+Fit a non-seasonal ARIMA$(p,d,q)$ model using the auto.arima() function to the non-seasonal data. Forecast 12 months ahead of time using the $forecast()$ function. Plot your forecasting results and further include on the plot the last year of non-seasonal data to compare with forecasted values (similar to the plot on the lesson file for M10).
 
 ```{r}
 
+ARIMA_fit <- auto.arima(seasadj_series)
+checkresiduals(ARIMA_fit)
+
+ARIMA_forecast <- forecast(ARIMA_fit,h=12)
+
+plot(ARIMA_forecast)
+lines(seasadj_lastyear,col="green")
+
 ```
+
+The result seems very strange, it looks like a mean forecast. This is possibly due to the lack of seasonality. 
 
 ### Q4
 
@@ -66,8 +138,15 @@ Put the seasonality back on your forecasted values and compare with the original
 
 
 ```{r}
+Temp <- decomposed_series$seasonal
+Temp1 <- snaive(Temp, 12, holdout=FALSE)
+Temp3 <- ARIMA_forecast
+Temp3$mean <- Temp3[["mean"]] + Temp1[["mean"]]
 
+plot(Temp3)
 ```
+Took me a while, but this still does not look right.
+
 
 ### Q5
 
@@ -75,11 +154,27 @@ Repeat Q3 for the original data, but now fit a seasonal ARIMA$(p,d,q)x(P,D,Q)_ {
 
 ```{r}
 
+SARIMA_fit <- auto.arima(time_series)
+checkresiduals(SARIMA_fit)
+
+SARIMA_forecast <- forecast(SARIMA_fit,h=12)
+
+plot(SARIMA_forecast)
+lines(lastyear_ts,col="green")
+
 ```
 
 ### Q6
 
 Compare the plots from Q4 and Q5 using the autoplot() function.
+
+```{r}
+par(mfrow=c(1,2))
+autoplot(Temp3)
+autoplot(SARIMA_forecast)
+
+```
+The plot from Q4 is clearly wrong, while the one from Q5 looks much more fitting. There seems to be a level of discontinuity however. 
 
 ## Part III: Forecasting with Other Models
 
@@ -89,6 +184,10 @@ Fit an exponential smooth model to the original time series using the function $
 
 ```{r}
 
+Exp_smooth <- es(time_series, h=12,holdout=FALSE,silent=FALSE)
+plot(Exp_smooth)
+checkresiduals(Exp_smooth)
+
 ```
 
 ### Q8
@@ -97,7 +196,15 @@ Fit a state space model to the original time series using the function $StructTS
 
 ```{r}
 
+SS_model <- StructTS(time_series,
+                    type="BSM",fixed=c(0.1,0.001,NA,NA)) 
+checkresiduals(SS_model)
+
+SS_for <- forecast(SS_model,h=12)
+plot(SS_for)
 ```
+We use BSM because it is a seasonal series, with a frequency > 1
+
 
 ## Part IV: Checking Forecast Accuracy
 
@@ -105,25 +212,46 @@ Fit a state space model to the original time series using the function $StructTS
 
 Make one plot with the complete original seasonal historical data (Jan 2000 to Dec 2010). Now add the forecasts from each of the developed models in parts Q4, Q5, Q7 and Q8. You can do it using the autoplot() combined with autolayer(). If everything is correct in terms of time line, the forecasted lines should appear only in the final year. If you decide to use ggplot() you will need to create a data frame with all the series will need to plot. Remember to use a different color for each model and add a legend in the end to tell which forecast lines corresponds to each model.
 
-
 ```{r}
+Inflow <- cbind("Original Data" =lastyear_ts, "SARIMA"=SARIMA_forecast$mean, "ARIMA"=Temp3$mean, "Exponential" = Exp_smooth$forecast, "State Space"=SS_for$mean )
+autoplot(Inflow)
 
 ```
+
+
 
 ### Q10
 
 From the plot in Q9 which model or model(s) are leading to the better forecasts? Explain your answer. Hint: Think about which models are doing a better job forecasting the high and low inflow months for example.
 
-
-```{r}
-
-```
+>Answer:
+It seems like the State Space model has the most accurate forecast, corresponding to the original data. 
 
 ### Q11
 
-Now compute the following forecast metrics we learned in class: RMSE and MAPE,  for all the models you plotted in part Q9. You can do this by hand since your have forecasted and observed values for the year of 2010. Or you can use R function $accuracy()$ from package "forecast" to do it. Build and a table with the results and highlight the model with the lowest MAPE. Does the lowest MAPE corresponds match your answer for part Q10?
+Now compute the following forecast metrics we learned in class: RMSE and MAPE,  for all the models you plotted in part Q9. You can do this by hand since you have forecasted and observed values for the year of 2010. Or you can use R function $accuracy()$ from package "forecast" to do it. Build and a table with the results and highlight the model with the lowest MAPE. Does the lowest MAPE corresponds match your answer for part Q10?
 
 ```{r}
+last_obs <- lastyear_ts[(132-11):132]
+
+ARIMA_scores <- accuracy(Temp3$mean, last_obs)
+SARIMA_scores <- accuracy(SARIMA_forecast$mean, last_obs)
+Exp_scores <- accuracy(Exp_smooth$forecast, last_obs)
+SS_scores <- accuracy(SS_for$mean, last_obs)
+
+seas_scores <- as.data.frame(rbind(ARIMA_scores, SARIMA_scores, Exp_scores, SS_scores))
+row.names(seas_scores) <- c("ARIMA", "SARIMA", "Exp", "SS")
+
+#choose model with lowest RMSE
+best_model_index <- which.min(seas_scores[,"RMSE"])
+cat("The best model by RMSE is:", row.names(seas_scores[best_model_index,]))
+
+
+kbl(seas_scores, caption = "Forecast Accuracy for Seasonal Data", digits = array(4,ncol(seas_scores))) %>% 
+  kable_styling(full_width = FALSE, position = "center") %>%
+  kable_styling(latex_options="striped", stripe_index = which.min(seas_scores[,"RMSE"]))
 
 ```
+>Answer:
+Yes, it seems like the lowest MAPE corresponds to my answer in Q10. 
 

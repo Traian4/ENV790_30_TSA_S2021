@@ -1,0 +1,183 @@
+---
+title: "ENV 790.30 - Time Series Analysis for Energy Data | Spring 2021"
+subtitle: "Assignment 5 - Due date 03/12/21"
+author: "Traian Nirca"
+output: pdf_document
+geometry: margin=2.54cm
+header-includes:
+  - \usepackage{enumerate}
+  - \usepackage{enumitem}
+---
+  
+## Directions
+  
+  You should open the .rmd file corresponding to this assignment on RStudio. The file is available on our class repository on Github. And to do so you will need to fork our repository and link it to your RStudio.  
+
+Once you have the project open the first thing you will do is change "Student Name" on line 3 with your name. 
+Then you will start working through the assignment by  **creating code and output** that answer each question. Be sure to use this assignment document. Your report should contain the answer to each question and any plots/tables you obtained (when applicable).
+
+When you have completed the assignment, **Knit** the text and code into a single PDF file. Rename the pdf file such that it includes your first and last name (e.g., "LuanaLima_TSA_A05_Sp21.Rmd"). Submit this pdf using Sakai. 
+
+## Questions 
+
+This assignment has general questions about ARIMA Models. 
+
+Packages needed for this assignment: "forecast","tseries". Do not forget to load them before running your script, since they are NOT default packages.\\
+
+```{r}
+#Load/install required package here
+
+library(forecast)
+library(tseries)
+
+```
+
+
+## Q1
+Describe the important characteristics of the sample autocorrelation function (ACF) plot and the partial sample autocorrelation function (PACF) plot for the following models: 
+
+\begin{enumerate}[label=(\alph*)]
+
+\item AR(2)
+
+> Answer:
+Has long memory.
+Th ACF decays exponentially with time.
+The PACF identifies the order: in this case leg one and two will be significant.
+The current value depends on its own 2 previous values.
+
+\item MA(1)
+
+> Answer: 
+Has short memory.
+The ACF identifies the order: in this case, only leg one will be significant.
+The PACF will decay exponentially.
+In MA(1) the current deviation depends on the previous deviation.
+
+\end{enumerate}
+
+## Q2
+Recall that the non-seasonal ARIMA is described by three parameters ARIMA$(p,d,q)$ where $p$ is the order of the autoregressive component, $d$ is the number of times the series need to be differenced to obtain stationarity and $q$ is the order of the moving average component. If we don't need to difference the series, we don't need to specify the "I" part and we can use the short version, i.e., the ARMA$(p,q)$. Consider three models: ARMA(1,0), ARMA(0,1) and ARMA(1,1) with parameters $\phi=0.6$ and $\theta= 0.9$. The $\phi$ refers to the AR coefficient and the $\theta$ refers to the MA coefficient. Use R to generate $n=100$ observations from each of these three models
+
+```{r}
+ts.10 <- arima.sim(list(order = c(1,0,0), ar = 0.6), n=100)
+ts.01 <- arima.sim(list(order = c(0,0,1), ma=0.9), n=100)
+ts.11 <- arima.sim(list(order = c(1,0,1), ar = 0.6, ma=0.9), n=100)
+
+par(mfrow=c(1,3))
+plot(ts.10)
+plot(ts.01)
+plot(ts.11)
+
+```
+
+
+\begin{enumerate}[label=(\alph*)]
+
+\item Plot the sample ACF for each of these models in one window to facilitate comparison (Hint: use command $par(mfrow=c(1,3))$ that divides the plotting window in three columns).  
+
+```{r}
+par(mfrow=c(1,3))
+Acf(ts.10)
+Acf(ts.01)
+Acf(ts.11)
+
+
+```
+
+
+\item Plot the sample PACF for each of these models in one window to facilitate comparison.  
+
+```{r}
+par(mfrow=c(1,3))
+Pacf(ts.10)
+Pacf(ts.01)
+Pacf(ts.11)
+
+```
+
+\item Look at the ACFs and PACFs. Imagine you had these plots for a data set and you were asked to identify the model, i.e., is it AR, MA or ARMA and the order of each component. Would you be identify them correctly? Explain your answer.
+
+> Answer:
+The first one has an ACF that decays exponentially and a PACF that spikes at 1. This would indicate an AR model of order 1.
+For the second one, the ACF peaks at 1, while the PACF shows a small decay. This would suggest an MA(1) model.
+For the third one, both the ACF and the PACF show a gradual decrease. An ARMA(1,1) model would be appropriate. Since the ACF decays sharply after lag 2, we should also test a MA(2) model.
+
+\item Compare the ACF and PACF values R computed with the theoretical values you provided for the coefficients. Do they match? Explain your answer.
+
+> Answer: 
+For the ARMA(1,0) model, the theoretical value seems to match, phi = 0.6, as we can see on the PACF. For the ARMA(0,1) model, however, the theoretical value of the ACF should be 0.9/(1+0.9*0.9)=0.497, and we observe the value 0.4, which suggest that the theta value of 0.9 that we have input, does not match with the one R computed.  
+
+
+\item Increase number of observations to $n=1000$ and repeat parts (a)-(d).
+
+```{r}
+ts2.10 <- arima.sim(list(order = c(1,0,0), ar = 0.6), n=1000)
+ts2.01 <- arima.sim(list(order = c(0,0,1), ma=0.9), n=1000)
+ts2.11 <- arima.sim(list(order = c(1,0,1), ar = 0.6, ma=0.9), n=1000)
+
+par(mfrow=c(1,3))
+plot(ts2.10)
+plot(ts2.01)
+plot(ts2.11)
+
+par(mfrow=c(1,3))
+Acf(ts2.10)
+Acf(ts2.01)
+Acf(ts2.11)
+
+par(mfrow=c(1,3))
+Pacf(ts2.10)
+Pacf(ts2.01)
+Pacf(ts2.11)
+
+
+```
+> Answer:
+Again, the first one has an ACF that decays exponentially and a PACF that spikes at 1. This indicates an AR model of order 1.
+For the second one, the ACF peaks at 1, while the PACF shows a very clear exponential decay. This suggests an MA(1) model.
+For the third one, both the ACF and the PACF show a gradual decrease. Defining the order would be more difficult here. An ARMA(1,1) model would be appropriate, but an MA(x) model could fit as well.
+
+
+\end{enumerate}
+
+## Q3
+
+Consider the ARIMA model $y_t=0.7*y_{t-1}-0.25*y_{t-12}+a_t-0.1*a_{t-1}$
+
+\begin{enumerate}[label=(\alph*)]
+
+\item Identify the model using the notation ARIMA$(p,d,q)(P,D,Q)_ s$, i.e., identify the integers $p,d,q,P,D,Q,s$ (if possible) from the equation.
+> Answer:
+s=12
+p=1
+d=0
+q=1
+P=1
+D=0
+Q=0
+
+\item Also from the equation what are the values of the parameters, i.e., model coefficients. 
+> Answer:
+$\theta$=0.1
+$\phi1$=0.7
+$\phi12$=-0.25
+
+\end{enumerate}
+## Q4
+
+Plot the ACF and PACF of a seasonal ARIMA$(0, 1)\times(1, 0)_{12}$ model with $\phi =0 .8$ and $\theta = 0.5$ using R. The $12$ after the bracket tells you that $s=12$, i.e., the seasonal lag is 12, suggesting monthly data whose behavior is repeated every 12 months. You can generate as many observations as you like. Note the Integrated part was omitted. It means the series do not need differencing, therefore $d=D=0$. Plot ACF and PACF for the simulated data. Comment if the plots are well representing the model you simulated, i.e., would you be able to identify the order of both non-seasonal and seasonal components from the plots? Explain.
+
+```{r}
+ts.seasonal <- arima.sim(list(order = c(0,0,1), seasonal = c(1,0,0), sar = 0.8, ma = 0.5, nseasons=12), n=1000)
+
+par(mfrow=c(1,3))
+plot(ts.seasonal)
+acf(ts.seasonal)
+pacf(ts.seasonal)
+
+
+```
+> Answer:
+It is hard to deduct the order of the seasonal and non-seasonal components. Since d and D = 0, no differencing has been performed on the series. The both the ACF and PACF show a slow decay. The seasonal trend is not very visible. Cannot detect the multiple spikes. It may be that thre is a problem with my simulated series and it did not take into account the seasonality, but I cannot detect how to fix that.   
+

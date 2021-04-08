@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.3.24)  25 MAR 2021 11:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.3.17)  17 MAR 2021 14:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**TSA_A5_Sp21.tex
-(./TSA_A5_Sp21.tex
+**TraianNirca_TSA_A5_Sp21.tex
+(./TraianNirca_TSA_A5_Sp21.tex
 LaTeX2e <2020-10-01> patch level 4
 L3 programming layer <2021-02-18> (c:/Users/trayz/AppData/Roaming/TinyTeX/texmf
 -dist/tex/latex/base/article.cls
@@ -416,12 +416,12 @@ Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
 )
 (c:/Users/trayz/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backen
 d-pdftex.def
-File: l3backend-pdftex.def 2021-03-18 L3 backend support: PDF output (pdfTeX)
+File: l3backend-pdftex.def 2021-03-02 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count284
 \l__pdf_internal_box=\box51
 )
-No file TSA_A5_Sp21.aux.
-\openout1 = `TSA_A5_Sp21.aux'.
+No file TraianNirca_TSA_A5_Sp21.aux.
+\openout1 = `TraianNirca_TSA_A5_Sp21.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 120.
 LaTeX Font Info:    ... okay on input line 120.
@@ -473,7 +473,7 @@ LaTeX Info: Redefining \ref on input line 120.
 LaTeX Info: Redefining \pageref on input line 120.
 LaTeX Info: Redefining \nameref on input line 120.
 \@outlinefile=\write4
-\openout4 = `TSA_A5_Sp21.out'.
+\openout4 = `TraianNirca_TSA_A5_Sp21.out'.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -559,27 +559,27 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <7> on input line 202.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 202.
-<TSA_A5_Sp21_files/figure-latex/unnamed-chunk-2-1.pdf, id=23, 469.755pt x 325.2
-15pt>
-File: TSA_A5_Sp21_files/figure-latex/unnamed-chunk-2-1.pdf Graphic file (type p
-df)
-<use TSA_A5_Sp21_files/figure-latex/unnamed-chunk-2-1.pdf>
-Package pdftex.def Info: TSA_A5_Sp21_files/figure-latex/unnamed-chunk-2-1.pdf  
-used on input line 226.
+<TraianNirca_TSA_A5_Sp21_files/figure-latex/unnamed-chunk-2-1.pdf, id=23, 469.7
+55pt x 325.215pt>
+File: TraianNirca_TSA_A5_Sp21_files/figure-latex/unnamed-chunk-2-1.pdf Graphic 
+file (type pdf)
+<use TraianNirca_TSA_A5_Sp21_files/figure-latex/unnamed-chunk-2-1.pdf>
+Package pdftex.def Info: TraianNirca_TSA_A5_Sp21_files/figure-latex/unnamed-chu
+nk-2-1.pdf  used on input line 226.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[2 <./TSA_A5_Sp21_files/figure-latex/unnamed-chunk-2-1.pdf>]
+[2 <./TraianNirca_TSA_A5_Sp21_files/figure-latex/unnamed-chunk-2-1.pdf>]
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.240 ![](TSA_
-              A5_Sp21_files/figure-latex/unnamed-chunk-3-1.pdf)<!-- --> 
+l.240 ![](TraianNirca_
+                      TSA_A5_Sp21_files/figure-latex/unnamed-chunk-3-1.pdf)<...
+ 
 Here is how much of TeX's memory you used:
- 11026 strings out of 480962
- 161550 string characters out of 5905990
- 474478 words of memory out of 5000000
+ 11028 strings out of 480962
+ 161843 string characters out of 5905732
+ 474514 words of memory out of 5000000
  28059 multiletter control sequences out of 15000+600000
  443356 words of font info for 65 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 71i,6n,74p,428b,455s stack positions out of 5000i,500n,10000p,200000b,80000s
-
+ 71i,6n,74p,440b,455s stack positions out of 5000i,500n,10000p,200000b,80000s
 !  ==> Fatal error occurred, no output PDF file produced!

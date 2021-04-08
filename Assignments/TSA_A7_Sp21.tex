@@ -1,0 +1,695 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={ENV 790.30 - Time Series Analysis for Energy Data \textbar{} Spring 2021},
+  pdfauthor={Traian Nirca},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=2.54cm]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage[utf8]{inputenc}
+\DeclareUnicodeCharacter{00A0}{ }
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{ENV 790.30 - Time Series Analysis for Energy Data \textbar{}
+Spring 2021}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Assignment 7 - Due date 04/07/21}
+\author{Traian Nirca}
+\date{}
+
+\begin{document}
+\maketitle
+
+\textbackslash begin\{document\}
+
+\hypertarget{directions}{%
+\subsection{Directions}\label{directions}}
+
+You should open the .rmd file corresponding to this assignment on
+RStudio. The file is available on our class repository on Github. And to
+do so you will need to fork our repository and link it to your RStudio.
+
+Once you have the project open the first thing you will do is change
+``Student Name'' on line 3 with your name. Then you will start working
+through the assignment by \textbf{creating code and output} that answer
+each question. Be sure to use this assignment document. Your report
+should contain the answer to each question and any plots/tables you
+obtained (when applicable).
+
+When you have completed the assignment, \textbf{Knit} the text and code
+into a single PDF file. Rename the pdf file such that it includes your
+first and last name (e.g., ``LuanaLima\_TSA\_A07\_Sp21.Rmd''). Submit
+this pdf using Sakai.
+
+\hypertarget{set-up}{%
+\subsection{Set up}\label{set-up}}
+
+Some packages needed for this assignment:
+\texttt{forecast},\texttt{tseries},\texttt{smooth}. Do not forget to
+load them before running your script, since they are NOT default
+packages.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Load/install required package here}
+\FunctionTok{library}\NormalTok{(forecast)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Registered S3 method overwritten by 'quantmod':
+##   method            from
+##   as.zoo.data.frame zoo
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tseries)}
+\FunctionTok{library}\NormalTok{(smooth)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: greybox
+\end{verbatim}
+
+\begin{verbatim}
+## Package "greybox", v0.6.8 loaded.
+\end{verbatim}
+
+\begin{verbatim}
+## This is package "smooth", v3.1.0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(lubridate)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'lubridate'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:greybox':
+## 
+##     hm
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     date, intersect, setdiff, union
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(kableExtra)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{importing-and-processing-the-data-set}{%
+\subsection{Importing and processing the data
+set}\label{importing-and-processing-the-data-set}}
+
+Consider the data from the file ``inflowtimeseries.txt''. The data
+corresponds to the monthly inflow in \(m^{3}/s\) for some hydro power
+plants in Brazil. You will only use the last column of the data set
+which represents one hydro plant in the Amazon river basin. The data
+span the period from January 1931 to August 2011 and is provided by the
+Brazilian ISO.
+
+For all parts of the assignment prepare the data set such that the model
+consider only the data from January 2000 up to December 2009. Leave the
+year 2010 of data (January 2010 to December 2010) for the out-of-sample
+analysis. Do \textbf{NOT} use data fro 2010 and 2011 for model fitting.
+You will only use it to compute forecast accuracy of your model.
+
+\hypertarget{part-i-preparing-the-data-sets}{%
+\subsection{Part I: Preparing the data
+sets}\label{part-i-preparing-the-data-sets}}
+
+\hypertarget{q1}{%
+\subsubsection{Q1}\label{q1}}
+
+Read the file into a data frame. Prepare your time series data vector
+such that observations start in January 2000 and end in December 2009.
+Make you sure you specify the \textbf{start=} and \textbf{frequency=}
+arguments. Plot the time series over time, ACF and PACF.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{raw\_data }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\AttributeTok{file=}\StringTok{"../Data/inflowtimeseries.txt"}\NormalTok{, }\AttributeTok{header=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{skip =} \DecValTok{828}\NormalTok{, }\AttributeTok{nrows =} \DecValTok{120}\NormalTok{)}
+
+\NormalTok{work\_data }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\StringTok{"Monthly Inflow"}\OtherTok{=}\NormalTok{raw\_data[,}\DecValTok{17}\NormalTok{])}
+
+\NormalTok{time\_series }\OtherTok{\textless{}{-}} \FunctionTok{ts}\NormalTok{(work\_data, }\AttributeTok{frequency =} \DecValTok{12}\NormalTok{, }\AttributeTok{start =} \FunctionTok{c}\NormalTok{(}\DecValTok{2000}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\FunctionTok{head}\NormalTok{(time\_series)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        Jan   Feb   Mar   Apr   May   Jun
+## 2000 22107 29247 36651 34089 25821 18007
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lastyear\_raw }\OtherTok{\textless{}{-}} \FunctionTok{read.table}\NormalTok{(}\AttributeTok{file=}\StringTok{"../Data/inflowtimeseries.txt"}\NormalTok{, }\AttributeTok{header=}\ConstantTok{FALSE}\NormalTok{, }\AttributeTok{skip =} \DecValTok{828}\NormalTok{, }\AttributeTok{nrows =} \DecValTok{132}\NormalTok{)}
+\NormalTok{lastyear\_work }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}\StringTok{"Monthly Inflow"}\OtherTok{=}\NormalTok{lastyear\_raw[,}\DecValTok{17}\NormalTok{])}
+\NormalTok{lastyear\_ts }\OtherTok{\textless{}{-}} \FunctionTok{ts}\NormalTok{(lastyear\_work, }\AttributeTok{frequency =} \DecValTok{12}\NormalTok{, }\AttributeTok{start =} \FunctionTok{c}\NormalTok{(}\DecValTok{2000}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+
+\NormalTok{the\_date }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(raw\_data[,}\DecValTok{1}\NormalTok{], raw\_data[,}\DecValTok{2}\NormalTok{])}
+\NormalTok{my\_date }\OtherTok{\textless{}{-}} \FunctionTok{my}\NormalTok{(the\_date)}
+\FunctionTok{head}\NormalTok{(my\_date)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "2000-01-01" "2000-02-01" "2000-03-01" "2000-04-01" "2000-05-01"
+## [6] "2000-06-01"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{the\_date2 }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(lastyear\_raw[,}\DecValTok{1}\NormalTok{], lastyear\_raw[,}\DecValTok{2}\NormalTok{])}
+\NormalTok{my\_date2 }\OtherTok{\textless{}{-}} \FunctionTok{my}\NormalTok{(the\_date2)}
+
+
+\FunctionTok{plot}\NormalTok{(time\_series, }\AttributeTok{ylab=}\StringTok{"Monthly Inflow (m\^{}3/s)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+\FunctionTok{Acf}\NormalTok{(time\_series, }\AttributeTok{lag.max =} \DecValTok{40}\NormalTok{)}
+\FunctionTok{Pacf}\NormalTok{(time\_series, }\AttributeTok{lag.max =} \DecValTok{40}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-2-2.pdf}
+
+\hypertarget{q2}{%
+\subsubsection{Q2}\label{q2}}
+
+Using the \(decompose()\) or \(stl()\) and the \(seasadj()\) functions
+create a series without the seasonal component, i.e., a deseasonalized
+inflow series. Plot the deseasonalized series and original series
+together using ggplot, make sure your plot includes a legend. Plot ACF
+and PACF for the deaseasonalized series. Compare with the plots obtained
+in Q1.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{decomposed\_series }\OtherTok{\textless{}{-}} \FunctionTok{decompose}\NormalTok{(time\_series,}\StringTok{"additive"}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(decomposed\_series)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{seasadj\_series }\OtherTok{\textless{}{-}} \FunctionTok{seasadj}\NormalTok{(decomposed\_series)}
+\FunctionTok{plot}\NormalTok{(seasadj\_series)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-3-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{decomposed\_lastyear }\OtherTok{\textless{}{-}} \FunctionTok{decompose}\NormalTok{(lastyear\_ts,}\StringTok{"additive"}\NormalTok{)}
+\NormalTok{seasadj\_lastyear }\OtherTok{\textless{}{-}} \FunctionTok{seasadj}\NormalTok{(decomposed\_lastyear)}
+
+\FunctionTok{ggplot}\NormalTok{(time\_series[,}\DecValTok{1}\NormalTok{], }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{my\_date)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y=}\NormalTok{time\_series[,}\DecValTok{1}\NormalTok{], }\AttributeTok{col=}\StringTok{"Original Series"}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y=}\NormalTok{seasadj\_series, }\AttributeTok{col=}\StringTok{"Deseasoned Series"}\NormalTok{))}\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Monthly Inflow (m\^{}3/s)"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Date"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Don't know how to automatically pick scale for object of type ts. Defaulting to continuous.
+\end{verbatim}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-3-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+\FunctionTok{Acf}\NormalTok{(seasadj\_series, }\AttributeTok{lag.max =} \DecValTok{40}\NormalTok{)}
+\FunctionTok{Pacf}\NormalTok{(seasadj\_series, }\AttributeTok{lag.max =} \DecValTok{40}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-3-4.pdf}
+\textgreater Answer: We certainly see a difference between these plots
+and those from Q1, as there is an (obvious) absence of the seasonal
+trend. The ACF of the seasonaly adjusted series does maintain a degree
+of seasonality.
+
+\hypertarget{part-ii-forecasting-with-arima-models-and-its-variations}{%
+\subsection{Part II: Forecasting with ARIMA models and its
+variations}\label{part-ii-forecasting-with-arima-models-and-its-variations}}
+
+\hypertarget{q3}{%
+\subsubsection{Q3}\label{q3}}
+
+Fit a non-seasonal ARIMA\((p,d,q)\) model using the auto.arima()
+function to the non-seasonal data. Forecast 12 months ahead of time
+using the \(forecast()\) function. Plot your forecasting results and
+further include on the plot the last year of non-seasonal data to
+compare with forecasted values (similar to the plot on the lesson file
+for M10).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ARIMA\_fit }\OtherTok{\textless{}{-}} \FunctionTok{auto.arima}\NormalTok{(seasadj\_series)}
+\FunctionTok{checkresiduals}\NormalTok{(ARIMA\_fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\begin{verbatim}
+## 
+##  Ljung-Box test
+## 
+## data:  Residuals from ARIMA(0,1,0)
+## Q* = 24.208, df = 24, p-value = 0.4498
+## 
+## Model df: 0.   Total lags used: 24
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ARIMA\_forecast }\OtherTok{\textless{}{-}} \FunctionTok{forecast}\NormalTok{(ARIMA\_fit,}\AttributeTok{h=}\DecValTok{12}\NormalTok{)}
+
+\FunctionTok{plot}\NormalTok{(ARIMA\_forecast)}
+\FunctionTok{lines}\NormalTok{(seasadj\_lastyear,}\AttributeTok{col=}\StringTok{"green"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-4-2.pdf}
+
+The result seems very strange, it looks like a mean forecast. This is
+possibly due to the lack of seasonality.
+
+\hypertarget{q4}{%
+\subsubsection{Q4}\label{q4}}
+
+Put the seasonality back on your forecasted values and compare with the
+original seasonal data values. \(Hint:\) One way to do it is by summing
+the last year of the seasonal component from your decompose object to
+the forecasted series.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Temp }\OtherTok{\textless{}{-}}\NormalTok{ decomposed\_series}\SpecialCharTok{$}\NormalTok{seasonal}
+\NormalTok{Temp1 }\OtherTok{\textless{}{-}} \FunctionTok{snaive}\NormalTok{(Temp, }\DecValTok{12}\NormalTok{, }\AttributeTok{holdout=}\ConstantTok{FALSE}\NormalTok{)}
+\NormalTok{Temp3 }\OtherTok{\textless{}{-}}\NormalTok{ ARIMA\_forecast}
+\NormalTok{Temp3}\SpecialCharTok{$}\NormalTok{mean }\OtherTok{\textless{}{-}}\NormalTok{ Temp3[[}\StringTok{"mean"}\NormalTok{]] }\SpecialCharTok{+}\NormalTok{ Temp1[[}\StringTok{"mean"}\NormalTok{]]}
+
+\FunctionTok{plot}\NormalTok{(Temp3)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-5-1.pdf}
+Took me a while, but this still does not look right.
+
+\hypertarget{q5}{%
+\subsubsection{Q5}\label{q5}}
+
+Repeat Q3 for the original data, but now fit a seasonal
+ARIMA\((p,d,q)x(P,D,Q)_ {12}\) also using the auto.arima().
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{SARIMA\_fit }\OtherTok{\textless{}{-}} \FunctionTok{auto.arima}\NormalTok{(time\_series)}
+\FunctionTok{checkresiduals}\NormalTok{(SARIMA\_fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{verbatim}
+## 
+##  Ljung-Box test
+## 
+## data:  Residuals from ARIMA(1,0,0)(0,1,1)[12] with drift
+## Q* = 19.881, df = 21, p-value = 0.5288
+## 
+## Model df: 3.   Total lags used: 24
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{SARIMA\_forecast }\OtherTok{\textless{}{-}} \FunctionTok{forecast}\NormalTok{(SARIMA\_fit,}\AttributeTok{h=}\DecValTok{12}\NormalTok{)}
+
+\FunctionTok{plot}\NormalTok{(SARIMA\_forecast)}
+\FunctionTok{lines}\NormalTok{(lastyear\_ts,}\AttributeTok{col=}\StringTok{"green"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-6-2.pdf}
+
+\hypertarget{q6}{%
+\subsubsection{Q6}\label{q6}}
+
+Compare the plots from Q4 and Q5 using the autoplot() function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+\FunctionTok{autoplot}\NormalTok{(Temp3)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{autoplot}\NormalTok{(SARIMA\_forecast)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-7-2.pdf}
+The plot from Q4 is clearly wrong, while the one from Q5 looks much more
+fitting. There seems to be a level of discontinuity however.
+
+\hypertarget{part-iii-forecasting-with-other-models}{%
+\subsection{Part III: Forecasting with Other
+Models}\label{part-iii-forecasting-with-other-models}}
+
+\hypertarget{q7}{%
+\subsubsection{Q7}\label{q7}}
+
+Fit an exponential smooth model to the original time series using the
+function \(es()\) from package \texttt{smooth}. Note that this function
+automatically do the forecast. Do not forget to set the arguments:
+silent=FALSE and holdout=FALSE, so that the plot is produced and the
+forecast is for the year of 2010.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Exp\_smooth }\OtherTok{\textless{}{-}} \FunctionTok{es}\NormalTok{(time\_series, }\AttributeTok{h=}\DecValTok{12}\NormalTok{,}\AttributeTok{holdout=}\ConstantTok{FALSE}\NormalTok{,}\AttributeTok{silent=}\ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Forming the pool of models based on... ANN, ANA, MNM, MAM, Estimation progress:    100%... Done!
+\end{verbatim}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(Exp\_smooth)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-8-2.pdf}
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-8-3.pdf}
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-8-4.pdf}
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-8-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{checkresiduals}\NormalTok{(Exp\_smooth)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in modeldf.default(object): Could not find appropriate degrees of
+## freedom for this model.
+\end{verbatim}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-8-6.pdf}
+
+\hypertarget{q8}{%
+\subsubsection{Q8}\label{q8}}
+
+Fit a state space model to the original time series using the function
+\(StructTS()\) from package \texttt{stats}. Which one of the tree model
+we learned should you try: ``local'', ``trend'', or ``BSM''. Why? Play
+with argument \texttt{fixed} a bit to try to understand how the
+different variances can affect the model. If you can't seem to find a
+variance that leads to a good fit here is a hint: try
+\(fixed=c(0.1, 0.001, NA, NA)\). Since \(StructTS()\) fits a state space
+model to the data, you need to use \(forecast()\) to generate the
+forecasts. Like you do for the ARIMA fit.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{SS\_model }\OtherTok{\textless{}{-}} \FunctionTok{StructTS}\NormalTok{(time\_series,}
+                    \AttributeTok{type=}\StringTok{"BSM"}\NormalTok{,}\AttributeTok{fixed=}\FunctionTok{c}\NormalTok{(}\FloatTok{0.1}\NormalTok{,}\FloatTok{0.001}\NormalTok{,}\ConstantTok{NA}\NormalTok{,}\ConstantTok{NA}\NormalTok{)) }
+\FunctionTok{checkresiduals}\NormalTok{(SS\_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in modeldf.default(object): Could not find appropriate degrees of
+## freedom for this model.
+\end{verbatim}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{SS\_for }\OtherTok{\textless{}{-}} \FunctionTok{forecast}\NormalTok{(SS\_model,}\AttributeTok{h=}\DecValTok{12}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(SS\_for)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-9-2.pdf}
+We use BSM because it is a seasonal series, with a frequency
+\textgreater{} 1
+
+\hypertarget{part-iv-checking-forecast-accuracy}{%
+\subsection{Part IV: Checking Forecast
+Accuracy}\label{part-iv-checking-forecast-accuracy}}
+
+\hypertarget{q9}{%
+\subsubsection{Q9}\label{q9}}
+
+Make one plot with the complete original seasonal historical data (Jan
+2000 to Dec 2010). Now add the forecasts from each of the developed
+models in parts Q4, Q5, Q7 and Q8. You can do it using the autoplot()
+combined with autolayer(). If everything is correct in terms of time
+line, the forecasted lines should appear only in the final year. If you
+decide to use ggplot() you will need to create a data frame with all the
+series will need to plot. Remember to use a different color for each
+model and add a legend in the end to tell which forecast lines
+corresponds to each model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Inflow }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(}\StringTok{"Original Data"} \OtherTok{=}\NormalTok{lastyear\_ts, }\StringTok{"SARIMA"}\OtherTok{=}\NormalTok{SARIMA\_forecast}\SpecialCharTok{$}\NormalTok{mean, }\StringTok{"ARIMA"}\OtherTok{=}\NormalTok{Temp3}\SpecialCharTok{$}\NormalTok{mean, }\StringTok{"Exponential"} \OtherTok{=}\NormalTok{ Exp\_smooth}\SpecialCharTok{$}\NormalTok{forecast, }\StringTok{"State Space"}\OtherTok{=}\NormalTok{SS\_for}\SpecialCharTok{$}\NormalTok{mean )}
+\FunctionTok{autoplot}\NormalTok{(Inflow)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TSA_A7_Sp21_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\hypertarget{q10}{%
+\subsubsection{Q10}\label{q10}}
+
+From the plot in Q9 which model or model(s) are leading to the better
+forecasts? Explain your answer. Hint: Think about which models are doing
+a better job forecasting the high and low inflow months for example.
+
+\begin{quote}
+Answer: It seems like the State Space model has the most accurate
+forecast, corresponding to the original data.
+\end{quote}
+
+\hypertarget{q11}{%
+\subsubsection{Q11}\label{q11}}
+
+Now compute the following forecast metrics we learned in class: RMSE and
+MAPE, for all the models you plotted in part Q9. You can do this by hand
+since you have forecasted and observed values for the year of 2010. Or
+you can use R function \(accuracy()\) from package ``forecast'' to do
+it. Build and a table with the results and highlight the model with the
+lowest MAPE. Does the lowest MAPE corresponds match your answer for part
+Q10?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{last\_obs }\OtherTok{\textless{}{-}}\NormalTok{ lastyear\_ts[(}\DecValTok{132{-}11}\NormalTok{)}\SpecialCharTok{:}\DecValTok{132}\NormalTok{]}
+
+\NormalTok{ARIMA\_scores }\OtherTok{\textless{}{-}} \FunctionTok{accuracy}\NormalTok{(Temp3}\SpecialCharTok{$}\NormalTok{mean, last\_obs)}
+\NormalTok{SARIMA\_scores }\OtherTok{\textless{}{-}} \FunctionTok{accuracy}\NormalTok{(SARIMA\_forecast}\SpecialCharTok{$}\NormalTok{mean, last\_obs)}
+\NormalTok{Exp\_scores }\OtherTok{\textless{}{-}} \FunctionTok{accuracy}\NormalTok{(Exp\_smooth}\SpecialCharTok{$}\NormalTok{forecast, last\_obs)}
+\NormalTok{SS\_scores }\OtherTok{\textless{}{-}} \FunctionTok{accuracy}\NormalTok{(SS\_for}\SpecialCharTok{$}\NormalTok{mean, last\_obs)}
+
+\NormalTok{seas\_scores }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(}\FunctionTok{rbind}\NormalTok{(ARIMA\_scores, SARIMA\_scores, Exp\_scores, SS\_scores))}
+\FunctionTok{row.names}\NormalTok{(seas\_scores) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"ARIMA"}\NormalTok{, }\StringTok{"SARIMA"}\NormalTok{, }\StringTok{"Exp"}\NormalTok{, }\StringTok{"SS"}\NormalTok{)}
+
+\CommentTok{\#choose model with lowest RMSE}
+\NormalTok{best\_model\_index }\OtherTok{\textless{}{-}} \FunctionTok{which.min}\NormalTok{(seas\_scores[,}\StringTok{"RMSE"}\NormalTok{])}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"The best model by RMSE is:"}\NormalTok{, }\FunctionTok{row.names}\NormalTok{(seas\_scores[best\_model\_index,]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## The best model by RMSE is: SS
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{kbl}\NormalTok{(seas\_scores, }\AttributeTok{caption =} \StringTok{"Forecast Accuracy for Seasonal Data"}\NormalTok{, }\AttributeTok{digits =} \FunctionTok{array}\NormalTok{(}\DecValTok{4}\NormalTok{,}\FunctionTok{ncol}\NormalTok{(seas\_scores))) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{full\_width =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{position =} \StringTok{"center"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options=}\StringTok{"striped"}\NormalTok{, }\AttributeTok{stripe\_index =} \FunctionTok{which.min}\NormalTok{(seas\_scores[,}\StringTok{"RMSE"}\NormalTok{]))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}
+
+\caption{\label{tab:unnamed-chunk-11}Forecast Accuracy for Seasonal Data}
+\centering
+\begin{tabular}[t]{l|r|r|r|r|r}
+\hline
+  & ME & RMSE & MAE & MPE & MAPE\\
+\hline
+ARIMA & -5818.4498 & 5852.520 & 5818.450 & -38.0417 & 38.0417\\
+\hline
+SARIMA & -4031.8177 & 4171.259 & 4031.818 & -23.8732 & 23.8732\\
+\hline
+Exp & -6502.7059 & 8098.586 & 6502.706 & -26.2114 & 26.2114\\
+\hline
+\cellcolor{gray!6}{SS} & \cellcolor{gray!6}{-106.3944} & \cellcolor{gray!6}{1332.997} & \cellcolor{gray!6}{1076.021} & \cellcolor{gray!6}{0.6930} & \cellcolor{gray!6}{5.6184}\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{quote}
+Answer: Yes, it seems like the lowest MAPE corresponds to my answer in
+Q10.
+\end{quote}
+
+\end{document}

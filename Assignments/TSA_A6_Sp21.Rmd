@@ -1,7 +1,7 @@
 ---
 title: "ENV 790.30 - Time Series Analysis for Energy Data | Spring 2021"
 subtitle: "Assignment 6 - Due date 03/26/21"
-author: "Student Name"
+author: "Traian Nirca"
 output: pdf_document
 geometry: margin=2.54cm
 header-includes:
@@ -17,10 +17,16 @@ Once you have the project open the first thing you will do is change "Student Na
 
 When you have completed the assignment, **Knit** the text and code into a single PDF file. Rename the pdf file such that it includes your first and last name (e.g., "LuanaLima_TSA_A06_Sp21.Rmd"). Submit this pdf using Sakai.
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,tidy.opts=list(width.cutoff=80), tidy=FALSE) 
+```
+
 ## Set up
 
 ```{r}
 #Load/install required package here
+library(forecast)
+library(tseries)
 
 ```
 
@@ -36,6 +42,20 @@ Import the csv file and create a time series object for natural gas. Make you su
 
 ```{r}
 
+raw_data <- read.csv(file="../Data/Net_generation_United_States_all_sectors_monthly.csv",header=FALSE,skip = 5)
+
+work_data <- data.frame("Natural Gas"=raw_data[,4])
+work_data <- work_data[nrow(raw_data):1,]
+
+time_series <- ts(work_data, frequency = 12, start = c(2001,1))
+head(time_series)
+
+
+plot(time_series, ylab="Natural Gas (GWh)")
+par(mfrow=c(1,2))
+Acf(time_series, lag.max = 40)
+Pacf(time_series, lag.max = 40)
+
 ```
 
 ### Q2
@@ -44,7 +64,19 @@ Using the $decompose()$ or $stl()$ and the $seasadj()$ functions create a series
 
 ```{r}
 
+decomposed_series <-decompose(time_series,"additive")
+plot(decomposed_series)
+
+deseasoned_series <- decomposed_series[["x"]]- decomposed_series[["seasonal"]]
+
+plot(deseasoned_series, ylab="Natural Gas (GWh)")
+par(mfrow=c(1,2))
+Acf(deseasoned_series, lag.max = 40)
+Pacf(deseasoned_series, lag.max = 40)
+
 ```
+We no longer observe the seasonality in the new plot, as well as in the ACF. We only see a rapid decrease. 
+
 
 ## Modeling the seasonally adjusted or deseasonalized series
 
@@ -53,6 +85,12 @@ Using the $decompose()$ or $stl()$ and the $seasadj()$ functions create a series
 Run the ADF test and Mann Kendall test on the deseasonalized data from Q2. Report and explain the results.
 
 ```{r}
+#ADF Test
+adf.test(deseasoned_series)
+
+#MannKendall Test
+#MannKendall(deseasoned_series)
+
 
 ```
 
@@ -60,21 +98,33 @@ Run the ADF test and Mann Kendall test on the deseasonalized data from Q2. Repor
 
 Using the plots from Q2 and test results from Q3 identify the ARIMA model parameters $p,d$ and $q$. Note that in this case because you removed the seasonal component prior to identifying the model you don't need to worry about seasonal component. Clearly state your criteria and any additional function in R you might use. DO NOT use the $auto.arima()$ function. You will be evaluated on ability to can read the plots and interpret the test results.
 
-```{r}
-
-```
+>Answer:
+Our value of p in the Dickey-Fuller test is lower than 0.05, which means the series is stationary. No differencing is needed, so d =0. The ACF has a slow decay and a clear cut off at lag 1 in the PACF plot. It is an auto-regressive model, ARIMA(1,0,0), with p=1 and q =0.  
 
 ### Q5
 
 Use $Arima()$ from package "forecast" to fit an ARIMA model to your series considering the order estimated in Q4. Should you allow for constants in the model, i.e., $include.mean = TRUE$ or $include.drift=TRUE$. **Print the coefficients** in your report. Hint: use the $cat()$ function to print.
 
 ```{r}
+arima_fit <- Arima(deseasoned_series, order=c(1,0,0),include.mean = TRUE, include.drift=TRUE)
 
+#print(cat(arima_fit$coef, arima_fit$sigma2))
+print(arima_fit$coef)
+print(cat("sigma2 =", arima_fit$sigma2))
+print(cat("Log likelihood = ", arima_fit$loglik))
+print(cat("AIC=",arima_fit$aic))
 ```
 
 ### Q6
 
 Now plot the residuals of the ARIMA fit from Q5 along with residuals ACF and PACF on the same window. You may use the $checkresiduals()$ function to automatically generate the three plots. Do the residual series look like a white noise series? Why?
+
+```{r}
+checkresiduals(arima_fit$fitted,test="LB", plot=TRUE)
+
+```
+The function $checkresiduals$ performs the Ljung-Box test which tests if the residuals are indistinguishable from white noise. If they are not, it means that the model is not adequate.
+
 
 ## Modeling the original series (with seasonality)
 
@@ -83,6 +133,29 @@ Now plot the residuals of the ARIMA fit from Q5 along with residuals ACF and PAC
 Repeat Q4-Q6 for the original series (the complete series that has the seasonal component). Note that when you model the seasonal series, you need to specify the seasonal part of the ARIMA model as well, i.e., $P$, $D$ and $Q$.
 
 ```{r}
+
+#ADF Test
+adf.test(time_series)
+
+#MannKendall Test
+#MannKendall(time_series)
+
+
+```
+>Answer:
+p is still smaller than 0.05, so D=0
+For the seasonal component, we are only interested in the seasonal lags 12, 24, 36, etc. We have multiple negative spikes in the PACF at lag 12, 24, 36... We assume it is a MA process, with Q=1. 
+Thus we have an ARIMA(1,0,0)x(0,0,1) model
+
+```{r}
+
+arima_fit1 <- Arima(time_series, order=c(1,0,0), seasonal= c(0,0,1),include.mean = TRUE, include.drift=TRUE)
+
+
+print(arima_fit1$coef)
+print(cat("sigma2 =", arima_fit1$sigma2))
+print(cat("Log likelihood = ", arima_fit1$loglik))
+print(cat("AIC=",arima_fit1$aic))
 
 ```
 
@@ -93,8 +166,12 @@ Compare the residual series for Q7 and Q6. Can you tell which ARIMA model is bet
 
 ```{r}
 
-```
+checkresiduals(arima_fit$fitted,test="LB", plot=TRUE)
+checkresiduals(arima_fit1$fitted,test="LB", plot=TRUE)
 
+
+```
+For the new model, we still have a seasonal component in the residuals. This means that the selected model was not the right one. It is not a fair comparison however, as the first model has been deseasoned.
 
 ## Checking your model with the auto.arima()
 
@@ -105,15 +182,16 @@ Compare the residual series for Q7 and Q6. Can you tell which ARIMA model is bet
 Use the $auto.arima()$ command on the **deseasonalized series** to let R choose the model parameter for you. What's the order of the best ARIMA model? Does it match what you specified in Q4?
 
 ```{r}
+auto.arima(deseasoned_series)
 
 ```
-
+Auto arima estimates that ARIMA(1,1,1) is the best model, which is not at all what I specified in Q4. It seems strange to me, as I had p<0.05, d should be 0.
 
 ### Q10
 
 Use the $auto.arima()$ command on the **original series** to let R choose the model parameters for you. Does it match what you specified in Q7?
 
 ```{r}
-
+auto.arima(time_series)
 ```
-
+Again, auto arima indicates a different model: ARIMA(1,0,0)(0,1,1), which is not what I specified in Q7, but it seems strange, as the non seasonal component does not match the one in Q9. 
